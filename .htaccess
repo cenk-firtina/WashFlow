@@ -1,0 +1,31 @@
+# ============================================================================
+# WashFlow - cPanel (CloudLinux Passenger) .htaccess SABLONU
+# ----------------------------------------------------------------------------
+# NOT: cPanel'de "Setup Node.js App" sihirbazi bu Passenger satirlarini
+# GENELLIKLE OTOMATIK uretir/gunceller. Asagidaki Passenger* satirlari,
+# otomatik uretim calismazsa diye referanstir. KULLANICI ADINIZA ve
+# NODE SURUMUNUZE gore yollari duzenleyin.
+#
+# Dosya, uygulamanin DOCUMENT ROOT'una (Application URL'in isaret ettigi
+# dizin, ör. public_html veya subdomain klasoru) konur.
+# ============================================================================
+
+# --- HTTPS'e yonlendir (SSL kuruluysa) ---
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# --- Passenger / Node.js App (cPanel otomatik uretmezse) ---
+# Yollari KENDI hesabiniza gore degistirin:
+#   /home/KULLANICI/washflow/server            -> uygulama koku (server/)
+#   /home/KULLANICI/nodevenv/.../18/bin/node        -> cPanel'in verdigi node yolu
+#
+# PassengerAppRoot "/home/KULLANICI/washflow/server"
+# PassengerBaseURI "/"
+# PassengerNodejs "/home/KULLANICI/nodevenv/washflow/server/18/bin/node"
+# PassengerAppType node
+# PassengerStartupFile dist/index.js
+
+# React build'i ve /api yonlendirmesi Express tarafindan yapilir;
+# Passenger tum istekleri Node uygulamasina iletir. Bu yuzden SPA icin
+# ek bir RewriteRule gerekmez.

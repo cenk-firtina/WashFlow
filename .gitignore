@@ -1,0 +1,35 @@
+# Bagimliliklar
+node_modules/
+**/node_modules/
+
+# Derleme ciktilari
+server/dist/
+client/dist/
+
+# Ortam
+.env
+**/.env
+!**/.env.example
+
+# Prisma
+server/prisma/*.db
+
+# Loglar
+*.log
+cron.log
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Tooling cache
+**/.impeccable/
+
+# Build info / generated (tsc -b ciktilari)
+*.tsbuildinfo
+client/vite.config.js
+client/vite.config.d.ts
+
+# Yerel referans gorselleri (uygulamanin parcasi degil)
+/ornek*.jpeg
