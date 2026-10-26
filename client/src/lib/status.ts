@@ -25,6 +25,13 @@ export const NEXT_STATUS: Partial<Record<TicketStatus, TicketStatus>> = {
   READY: 'COMPLETED',
 };
 
+// Bir durumdan geri alinabilecek onceki durum (panoda "geri al").
+export const PREV_STATUS: Partial<Record<TicketStatus, TicketStatus>> = {
+  WASHING: 'QUEUED',
+  DETAILING: 'WASHING',
+  READY: 'DETAILING',
+};
+
 export const STATUS_BADGE: Record<TicketStatus, string> = {
   QUEUED: 'bg-slate-100 text-slate-700',
   WASHING: 'bg-blue-100 text-blue-700',

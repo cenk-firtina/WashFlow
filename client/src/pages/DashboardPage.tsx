@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Car, CheckCircle2, CircleDollarSign, Clock3, MessageCircle, XCircle } from 'lucide-react';
 import { useState } from 'react';
-import { ServicesManager } from '../components/ServicesManager';
 import { api } from '../lib/api';
 import { formatDateTime, formatTRY } from '../lib/format';
 import type { DashboardSummary, MessageLog } from '../types';
@@ -111,9 +110,6 @@ export default function DashboardPage() {
           </table>
         </div>
       </section>
-
-      {/* Hizmet yonetimi (ad, kategori, fiyat, sure) */}
-      <ServicesManager />
     </div>
   );
 }

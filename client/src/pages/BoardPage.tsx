@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowRight, Clock, MessageSquare, Phone, X } from 'lucide-react';
+import { ArrowRight, Clock, MessageSquare, Phone, Undo2, X } from 'lucide-react';
 import { api } from '../lib/api';
 import { elapsedSince, formatTRY } from '../lib/format';
-import { BOARD_COLUMNS, NEXT_STATUS, STATUS_LABELS } from '../lib/status';
+import { BOARD_COLUMNS, NEXT_STATUS, PREV_STATUS, STATUS_LABELS } from '../lib/status';
 import type { Ticket, TicketStatus } from '../types';
 
 export default function BoardPage() {
@@ -50,6 +50,7 @@ export default function BoardPage() {
 
                 {columnTickets.map((t) => {
                   const next = NEXT_STATUS[t.status];
+                  const prev = PREV_STATUS[t.status];
                   return (
                     <div key={t.id} className="rounded-xl bg-white p-4 shadow-sm">
                       <div className="flex items-start justify-between">
@@ -76,6 +77,16 @@ export default function BoardPage() {
                       </div>
 
                       <div className="mt-3 flex gap-2">
+                        {prev && (
+                          <button
+                            onClick={() => changeStatus.mutate({ id: t.id, status: prev })}
+                            disabled={changeStatus.isPending}
+                            className="flex items-center gap-1 rounded-lg border border-slate-200 px-2 text-sm text-slate-500 hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60"
+                            title={`Geri al: ${STATUS_LABELS[prev]}`}
+                          >
+                            <Undo2 className="h-4 w-4" />
+                          </button>
+                        )}
                         {next && (
                           <button
                             onClick={() => changeStatus.mutate({ id: t.id, status: next })}

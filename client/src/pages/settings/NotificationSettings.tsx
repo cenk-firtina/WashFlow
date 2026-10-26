@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, MessageCircle, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { api, apiError } from '../lib/api';
-import type { SystemSettings } from '../types';
+import { api, apiError } from '../../lib/api';
+import type { SystemSettings } from '../../types';
 
 const KEYS = {
   intake: 'intake_wa_enabled',
@@ -37,7 +37,7 @@ function Toggle({ checked, onChange, label, desc }: { checked: boolean; onChange
   );
 }
 
-export default function SettingsPage() {
+export default function NotificationSettings() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<SystemSettings>({});
   const [saved, setSaved] = useState(false);
@@ -68,13 +68,13 @@ export default function SettingsPage() {
   const bool = (key: string) => form[key] === 'true';
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="flex items-center gap-2 text-2xl font-bold">
-        <MessageCircle className="h-6 w-6 text-green-600" /> WhatsApp Ayarlari
-      </h1>
+    <div className="space-y-6">
+      <h2 className="flex items-center gap-2 text-xl font-bold">
+        <MessageCircle className="h-5 w-5 text-green-600" /> WhatsApp Bildirimleri
+      </h2>
 
       <section className="space-y-3 rounded-2xl bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold">Otomatik Bildirim Anahtarlari</h2>
+        <h3 className="text-base font-semibold">Otomatik Bildirim Anahtarlari</h3>
         <Toggle checked={bool(KEYS.intake)} onChange={(v) => set(KEYS.intake, String(v))} label="Arac Kabul (INTAKE)" desc="Bilet acildiginda musteriye WhatsApp." />
         <Toggle checked={bool(KEYS.ready)} onChange={(v) => set(KEYS.ready, String(v))} label="Teslime Hazir (READY)" desc="Durum 'Hazir' olunca WhatsApp." />
         <Toggle checked={bool(KEYS.retention)} onChange={(v) => set(KEYS.retention, String(v))} label="Geri Cagirma (RETENTION)" desc="Cron ile uzun sure gelmeyen musterilere WhatsApp." />
@@ -93,10 +93,9 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      {/* WhatsApp Cloud API template eslemesi */}
       <section className="space-y-4 rounded-2xl bg-white p-6 shadow-sm">
         <div>
-          <h2 className="text-lg font-semibold">Meta Template Eslemesi</h2>
+          <h3 className="text-base font-semibold">Meta Template Eslemesi</h3>
           <p className="mt-1 text-xs text-slate-500">
             Mesaj metinleri Meta Business'ta onaylanan template'lerde tanimlidir. Buraya her mesaj tipi icin
             <b> onayli template adini</b> ve <b>dil kodunu</b> girin. Parametre sirasi:
@@ -123,10 +122,9 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      {/* Log/onizleme metinleri */}
       <section className="space-y-4 rounded-2xl bg-white p-6 shadow-sm">
         <div>
-          <h2 className="text-lg font-semibold">Onizleme Metinleri (log icin)</h2>
+          <h3 className="text-base font-semibold">Onizleme Metinleri (log icin)</h3>
           <p className="mt-1 text-xs text-slate-500">
             Panelde/loglarda gorunecek okunur metin. Gercek gonderim Meta template'i ile yapilir; bu metni
             template ile ayni tutmaniz onerilir. Yer tutucular:{' '}
