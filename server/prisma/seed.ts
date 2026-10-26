@@ -42,6 +42,31 @@ async function main() {
     await prisma.systemSetting.upsert({ where: { key }, update: {}, create: { key, value } });
   }
 
+  // --- Arac markalari (TR piyasasina gore; populer olanlar isaretli) ---
+  const popular = [
+    'Renault', 'Fiat', 'Volkswagen', 'Ford', 'Opel', 'Toyota', 'Hyundai',
+    'Peugeot', 'Dacia', 'Mercedes-Benz', 'BMW', 'Audi', 'Honda', 'Citroen', 'Togg',
+  ];
+  const others = [
+    'Alfa Romeo', 'BYD', 'Chery', 'Chevrolet', 'Cupra', 'DS Automobiles', 'Isuzu',
+    'Jaguar', 'Jeep', 'Kia', 'Land Rover', 'Lexus', 'Mazda', 'MG', 'MINI',
+    'Mitsubishi', 'Nissan', 'Porsche', 'Seat', 'Skoda', 'Smart', 'SsangYong',
+    'Subaru', 'Suzuki', 'Tesla', 'Volvo', 'Alpine', 'Maserati', 'Ferrari',
+    'Lamborghini', 'Bentley', 'Mahindra',
+  ];
+  const brands = [
+    ...popular.map((name) => ({ name, isPopular: true })),
+    ...others.map((name) => ({ name, isPopular: false })),
+  ];
+  for (const b of brands) {
+    await prisma.vehicleBrand.upsert({
+      where: { name: b.name },
+      update: { isPopular: b.isPopular },
+      create: b,
+    });
+  }
+  console.log(`  ${brands.length} arac markasi yuklendi (${popular.length} sik kullanilan).`);
+
   // --- Ornek musteri + arac (opsiyonel demo verisi) ---
   const demo = await prisma.customer.upsert({
     where: { phone: '05551112233' },

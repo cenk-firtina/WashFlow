@@ -3,6 +3,7 @@ import authRoutes from './modules/auth/auth.routes';
 import customersRoutes from './modules/customers/customers.routes';
 import vehiclesRoutes from './modules/vehicles/vehicles.routes';
 import servicesRoutes from './modules/services/services.routes';
+import brandsRoutes from './modules/brands/brands.routes';
 import ticketsRoutes from './modules/tickets/tickets.routes';
 import trackingRoutes from './modules/tracking/tracking.routes';
 import settingsRoutes from './modules/settings/settings.routes';
@@ -16,6 +17,7 @@ api.use('/auth', authRoutes);
 api.use('/customers', customersRoutes);
 api.use('/vehicles', vehiclesRoutes);
 api.use('/services', servicesRoutes);
+api.use('/brands', brandsRoutes);
 api.use('/tickets', ticketsRoutes);
 api.use('/tracking', trackingRoutes); // PUBLIC
 api.use('/settings', settingsRoutes);

@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import BoardPage from './pages/BoardPage';
+import BrandsPage from './pages/BrandsPage';
 import DashboardPage from './pages/DashboardPage';
 import IntakePage from './pages/IntakePage';
 import LoginPage from './pages/LoginPage';
@@ -26,6 +27,14 @@ export default function App() {
         <Route index element={<BoardPage />} />
         <Route path="/kabul" element={<IntakePage />} />
         <Route path="/yonetim" element={<DashboardPage />} />
+        <Route
+          path="/markalar"
+          element={
+            <ProtectedRoute roles={['ADMIN']}>
+              <BrandsPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/ayarlar"
           element={

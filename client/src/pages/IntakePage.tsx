@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, apiError } from '../lib/api';
 import { formatTRY } from '../lib/format';
-import type { Service, Ticket, VehicleSegment } from '../types';
+import type { Service, Ticket, VehicleBrand, VehicleSegment } from '../types';
 
 const SEGMENTS: { value: VehicleSegment; label: string }[] = [
   { value: 'SEDAN', label: 'Sedan' },
@@ -20,7 +20,8 @@ export default function IntakePage() {
   const [customerId, setCustomerId] = useState<number | null>(null);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [brandModel, setBrandModel] = useState('');
+  const [brand, setBrand] = useState('');
+  const [model, setModel] = useState('');
   const [segment, setSegment] = useState<VehicleSegment>('SEDAN');
   const [allowMarketingSms, setAllowMarketingSms] = useState(true);
   const [notes, setNotes] = useState('');
@@ -34,6 +35,13 @@ export default function IntakePage() {
     queryFn: async () => (await api.get<Service[]>('/services')).data,
   });
 
+  const { data: brands = [] } = useQuery({
+    queryKey: ['brands'],
+    queryFn: async () => (await api.get<VehicleBrand[]>('/brands')).data,
+  });
+  const popularBrands = brands.filter((b) => b.isPopular);
+  const otherBrands = brands.filter((b) => !b.isPopular);
+
   const lookup = useMutation({
     mutationFn: async (p: string) => (await api.get('/vehicles/lookup', { params: { plate: p } })).data,
     onSuccess: (data) => {
@@ -42,7 +50,17 @@ export default function IntakePage() {
         setCustomerId(v.customer.id);
         setName(v.customer.name);
         setPhone(v.customer.phone);
-        setBrandModel(v.brandModel ?? '');
+        // brandModel ("Volkswagen Passat") -> marka + model olarak ayir.
+        const bm = (v.brandModel ?? '').trim();
+        const list = queryClient.getQueryData<VehicleBrand[]>(['brands']) ?? [];
+        const matched = list.find((b) => bm.toLowerCase().startsWith(b.name.toLowerCase()));
+        if (matched) {
+          setBrand(matched.name);
+          setModel(bm.slice(matched.name.length).trim());
+        } else {
+          setBrand('');
+          setModel(bm);
+        }
         setSegment(v.segment);
         setAllowMarketingSms(v.customer.allowMarketingSms);
         setLookupState('found');
@@ -57,7 +75,7 @@ export default function IntakePage() {
     mutationFn: async () => {
       const payload = {
         plate,
-        brandModel: brandModel || undefined,
+        brandModel: [brand, model].map((s) => s.trim()).filter(Boolean).join(' ') || undefined,
         segment,
         notes: notes || undefined,
         serviceIds: selected,
@@ -88,7 +106,8 @@ export default function IntakePage() {
     setCustomerId(null);
     setName('');
     setPhone('');
-    setBrandModel('');
+    setBrand('');
+    setModel('');
     setSegment('SEDAN');
     setNotes('');
     setSelected([]);
@@ -170,15 +189,37 @@ export default function IntakePage() {
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">Marka / Model</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">Marka</label>
+              <select
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              >
+                <option value="">Marka secin...</option>
+                {popularBrands.length > 0 && (
+                  <optgroup label="⭐ Sik Kullanilanlar">
+                    {popularBrands.map((b) => (
+                      <option key={b.id} value={b.name}>{b.name}</option>
+                    ))}
+                  </optgroup>
+                )}
+                <optgroup label="Tum Markalar">
+                  {otherBrands.map((b) => (
+                    <option key={b.id} value={b.name}>{b.name}</option>
+                  ))}
+                </optgroup>
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">Model</label>
               <input
-                value={brandModel}
-                onChange={(e) => setBrandModel(e.target.value)}
-                placeholder="VW Passat"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                placeholder="Passat 1.6 TDI"
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               />
             </div>
-            <div>
+            <div className="sm:col-span-2">
               <label className="mb-1 block text-sm font-medium text-slate-700">Segment</label>
               <div className="flex gap-2">
                 {SEGMENTS.map((s) => (

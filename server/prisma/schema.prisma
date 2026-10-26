@@ -172,3 +172,16 @@ model SystemSetting {
 
   @@map("system_settings")
 }
+
+// Arac markasi referans/lookup tablosu (Arac Kabul dropdown kaynagi).
+model VehicleBrand {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(80)
+  isPopular Boolean  @default(false) @map("is_popular") // Sik kullanilanlar
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([isPopular])
+  @@index([active])
+  @@map("vehicle_brands")
+}

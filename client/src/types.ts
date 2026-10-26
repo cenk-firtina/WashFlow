@@ -45,6 +45,14 @@ export interface Service {
   active: boolean;
 }
 
+export interface VehicleBrand {
+  id: number;
+  name: string;
+  isPopular: boolean;
+  active: boolean;
+  createdAt: string;
+}
+
 export interface TicketService {
   id: number;
   serviceId: number;

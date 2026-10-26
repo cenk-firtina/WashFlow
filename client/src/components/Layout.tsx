@@ -1,4 +1,4 @@
-import { BarChart3, Car, LayoutGrid, LogOut, Settings, Waves } from 'lucide-react';
+import { BarChart3, Car, LayoutGrid, LogOut, Settings, Tags, Waves } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 
@@ -32,9 +32,14 @@ export function Layout() {
               <BarChart3 className="h-4 w-4" /> Yonetim
             </NavLink>
             {user?.role === 'ADMIN' && (
-              <NavLink to="/ayarlar" className={navClass}>
-                <Settings className="h-4 w-4" /> Ayarlar
-              </NavLink>
+              <>
+                <NavLink to="/markalar" className={navClass}>
+                  <Tags className="h-4 w-4" /> Markalar
+                </NavLink>
+                <NavLink to="/ayarlar" className={navClass}>
+                  <Settings className="h-4 w-4" /> Ayarlar
+                </NavLink>
+              </>
             )}
           </nav>
 
