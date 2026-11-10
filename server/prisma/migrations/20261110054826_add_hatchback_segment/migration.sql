@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `vehicles` MODIFY `segment` ENUM('HATCHBACK', 'SEDAN', 'SUV', 'VAN') NOT NULL DEFAULT 'SEDAN';

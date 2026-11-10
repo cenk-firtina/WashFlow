@@ -12,3 +12,9 @@ export async function list(req: Request, res: Response) {
   const query = typeof req.query.query === 'string' ? req.query.query : undefined;
   res.json(await service.listVehicles(query));
 }
+
+export async function history(req: Request, res: Response) {
+  const plate = typeof req.query.plate === 'string' ? req.query.plate : '';
+  const report = await service.getVehicleHistory(plate);
+  res.json({ found: !!report, report });
+}

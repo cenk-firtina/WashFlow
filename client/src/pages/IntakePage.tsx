@@ -7,6 +7,7 @@ import { formatTRY } from '../lib/format';
 import type { Service, Ticket, VehicleBrand, VehicleSegment } from '../types';
 
 const SEGMENTS: { value: VehicleSegment; label: string }[] = [
+  { value: 'HATCHBACK', label: 'Hatchback' },
   { value: 'SEDAN', label: 'Sedan' },
   { value: 'SUV', label: 'SUV' },
   { value: 'VAN', label: 'Van' },
@@ -124,16 +125,16 @@ export default function IntakePage() {
   // ---- Basari ekrani ----
   if (createdTicket) {
     return (
-      <div className="mx-auto max-w-lg rounded-2xl bg-white p-8 text-center shadow-sm">
+      <div className="mx-auto max-w-lg rounded-2xl bg-white p-8 text-center shadow-card">
         <CheckCircle2 className="mx-auto mb-3 h-16 w-16 text-green-500" />
-        <h2 className="text-2xl font-bold">Arac Kabul Edildi</h2>
+        <h2 className="text-2xl font-bold">Araç Kabul Edildi</h2>
         <p className="mt-1 text-slate-500">
-          Bilet <span className="font-mono font-semibold">{createdTicket.ticketCode}</span> olusturuldu, INTAKE
-          WhatsApp mesaji kuyruga alindi.
+          Bilet <span className="font-mono font-semibold">{createdTicket.ticketCode}</span> oluşturuldu, müşteriye
+          kabul WhatsApp mesajı kuyruğa alındı.
         </p>
         <div className="mt-4 rounded-xl bg-slate-50 p-4 text-left text-sm">
           <p><b>Plaka:</b> {createdTicket.vehicle.plate}</p>
-          <p><b>Musteri:</b> {createdTicket.vehicle.customer.name}</p>
+          <p><b>Müşteri:</b> {createdTicket.vehicle.customer.name}</p>
           <p><b>Tahmini teslim:</b> {createdTicket.estimatedReadyAt ? new Date(createdTicket.estimatedReadyAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '-'}</p>
           <p><b>Takip linki:</b> <span className="font-mono">/t/{createdTicket.trackingToken}</span></p>
         </div>
@@ -155,8 +156,8 @@ export default function IntakePage() {
     <div className="grid gap-6 lg:grid-cols-3">
       {/* SOL: Arac & Musteri */}
       <div className="space-y-6 lg:col-span-2">
-        <section className="rounded-2xl bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold">1. Arac Bilgisi</h2>
+        <section className="rounded-2xl bg-white p-6 shadow-card">
+          <h2 className="mb-4 text-lg font-semibold">1. Araç Bilgisi</h2>
           <label className="mb-1 block text-sm font-medium text-slate-700">Plaka</label>
           <div className="flex gap-2">
             <input
@@ -178,12 +179,12 @@ export default function IntakePage() {
 
           {lookupState === 'found' && (
             <p className="mt-2 flex items-center gap-1 text-sm text-green-600">
-              <CheckCircle2 className="h-4 w-4" /> Kayitli musteri bulundu, bilgiler dolduruldu.
+              <CheckCircle2 className="h-4 w-4" /> Kayıtlı müşteri bulundu, bilgiler dolduruldu.
             </p>
           )}
           {lookupState === 'new' && (
             <p className="mt-2 flex items-center gap-1 text-sm text-amber-600">
-              <UserPlus className="h-4 w-4" /> Yeni plaka. Lutfen musteri bilgilerini girin.
+              <UserPlus className="h-4 w-4" /> Yeni plaka. Lütfen müşteri bilgilerini girin.
             </p>
           )}
 
@@ -195,15 +196,15 @@ export default function IntakePage() {
                 onChange={(e) => setBrand(e.target.value)}
                 className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               >
-                <option value="">Marka secin...</option>
+                <option value="">Marka seçin...</option>
                 {popularBrands.length > 0 && (
-                  <optgroup label="⭐ Sik Kullanilanlar">
+                  <optgroup label="⭐ Sık Kullanılanlar">
                     {popularBrands.map((b) => (
                       <option key={b.id} value={b.name}>{b.name}</option>
                     ))}
                   </optgroup>
                 )}
-                <optgroup label="Tum Markalar">
+                <optgroup label="Tüm Markalar">
                   {otherBrands.map((b) => (
                     <option key={b.id} value={b.name}>{b.name}</option>
                   ))}
@@ -238,8 +239,8 @@ export default function IntakePage() {
           </div>
         </section>
 
-        <section className="rounded-2xl bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold">2. Musteri</h2>
+        <section className="rounded-2xl bg-white p-6 shadow-card">
+          <h2 className="mb-4 text-lg font-semibold">2. Müşteri</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">Ad Soyad</label>
@@ -264,12 +265,12 @@ export default function IntakePage() {
           {!customerId && (
             <label className="mt-3 flex items-center gap-2 text-sm text-slate-600">
               <input type="checkbox" checked={allowMarketingSms} onChange={(e) => setAllowMarketingSms(e.target.checked)} />
-              Kampanya / hatirlatma mesajlarina izin veriyor
+              Kampanya / hatırlatma mesajlarına izin veriyor
             </label>
           )}
         </section>
 
-        <section className="rounded-2xl bg-white p-6 shadow-sm">
+        <section className="rounded-2xl bg-white p-6 shadow-card">
           <h2 className="mb-4 text-lg font-semibold">3. Hizmetler</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {services.map((s) => {
@@ -308,12 +309,12 @@ export default function IntakePage() {
 
       {/* SAG: Ozet */}
       <aside className="lg:col-span-1">
-        <div className="sticky top-20 rounded-2xl bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold">Ozet</h2>
+        <div className="sticky top-20 rounded-2xl bg-white p-6 shadow-card">
+          <h2 className="mb-4 text-lg font-semibold">Özet</h2>
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-slate-500">Secili hizmet</span><span>{selected.length}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">Seçili hizmet</span><span>{selected.length}</span></div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Tahmini sure</span>
+              <span className="text-slate-500">Tahmini süre</span>
               <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> {totalMinutes} dk</span>
             </div>
             <div className="flex justify-between border-t border-slate-100 pt-2 text-base font-bold">
@@ -332,7 +333,7 @@ export default function IntakePage() {
             Kabul Et
           </button>
           <p className="mt-2 text-center text-xs text-slate-400">
-            Kabul edildiginde musteriye otomatik INTAKE WhatsApp mesaji gonderilir.
+            Kabul edildiğinde müşteriye otomatik kabul WhatsApp mesajı gönderilir.
           </p>
         </div>
       </aside>

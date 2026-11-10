@@ -6,7 +6,7 @@ import * as service from './tickets.service';
 const createSchema = z.object({
   plate: z.string().min(2, 'Plaka zorunlu.'),
   brandModel: z.string().optional(),
-  segment: z.enum(['SEDAN', 'SUV', 'VAN']).optional(),
+  segment: z.enum(['HATCHBACK', 'SEDAN', 'SUV', 'VAN']).optional(),
   notes: z.string().optional(),
   serviceIds: z.array(z.number().int().positive()).min(1, 'En az bir hizmet secin.'),
   customer: z.object({
@@ -30,6 +30,11 @@ export async function board(_req: Request, res: Response) {
   res.json(await service.listBoard());
 }
 
+export async function completedToday(req: Request, res: Response) {
+  const date = typeof req.query.date === 'string' ? req.query.date : undefined;
+  res.json(await service.listCompletedByDate(date));
+}
+
 export async function getOne(req: Request, res: Response) {
   const ticket = await service.getTicket(Number(req.params.id));
   if (!ticket) throw new ApiError(404, 'Bilet bulunamadi.');
@@ -39,4 +44,11 @@ export async function getOne(req: Request, res: Response) {
 export async function patchStatus(req: Request, res: Response) {
   const { status } = statusSchema.parse(req.body);
   res.json(await service.updateStatus(Number(req.params.id), status));
+}
+
+const notifySchema = z.object({ kind: z.enum(['INTAKE', 'READY']) });
+
+export async function notify(req: Request, res: Response) {
+  const { kind } = notifySchema.parse(req.body);
+  res.json(await service.notifyTicket(Number(req.params.id), kind));
 }

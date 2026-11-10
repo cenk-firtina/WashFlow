@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { ApiError } from '../../lib/http';
 import * as service from './customers.service';
 
-const segmentEnum = z.enum(['SEDAN', 'SUV', 'VAN']);
+const segmentEnum = z.enum(['HATCHBACK', 'SEDAN', 'SUV', 'VAN']);
 
 const createSchema = z.object({
   name: z.string().min(2, 'Ad en az 2 karakter.'),

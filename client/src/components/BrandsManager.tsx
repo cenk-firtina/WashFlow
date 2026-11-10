@@ -51,26 +51,26 @@ export function BrandsManager() {
   const canSubmit = form.name.trim().length >= 1;
 
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm">
+    <section className="rounded-2xl bg-white p-6 shadow-card">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
-          <Star className="h-5 w-5 text-amber-500" /> Arac Markalari
+          <Star className="h-5 w-5 text-amber-500" /> Araç Markaları
         </h2>
         <span className="text-sm text-slate-400">
-          {brands.filter((b) => b.active).length} marka · {popularCount} sik kullanilan
+          {brands.filter((b) => b.active).length} marka · {popularCount} sık kullanılan
         </span>
       </div>
 
       {isAdmin && (
         <div className="mb-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
           <p className="mb-3 text-sm font-medium text-slate-600">
-            {form.id ? `Marka duzenleniyor (#${form.id})` : 'Yeni marka ekle'}
+            {form.id ? `Marka düzenleniyor (#${form.id})` : 'Yeni marka ekle'}
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              placeholder="Marka adi (ör. Volkswagen)"
+              placeholder="Marka adı (ör. Volkswagen)"
               className="min-w-[220px] flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
             <label className="flex items-center gap-2 text-sm text-slate-600">
@@ -79,7 +79,7 @@ export function BrandsManager() {
                 checked={form.isPopular}
                 onChange={(e) => setForm((f) => ({ ...f, isPopular: e.target.checked }))}
               />
-              Sik kullanilan
+              Sık kullanılan
             </label>
             <button
               onClick={() => save.mutate()}
@@ -87,7 +87,7 @@ export function BrandsManager() {
               className="flex items-center gap-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
             >
               {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : form.id ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-              {form.id ? 'Guncelle' : 'Ekle'}
+              {form.id ? 'Güncelle' : 'Ekle'}
             </button>
             {form.id && (
               <button onClick={() => { setForm(EMPTY); setError(''); }} className="rounded-lg border border-slate-300 px-2 py-2 text-slate-500 hover:bg-white">
@@ -104,9 +104,9 @@ export function BrandsManager() {
           <thead>
             <tr className="border-b border-slate-100 text-slate-400">
               <th className="py-2 pr-4 font-medium">Marka</th>
-              <th className="py-2 pr-4 font-medium">Sik Kullanilan</th>
+              <th className="py-2 pr-4 font-medium">Sık Kullanılan</th>
               <th className="py-2 pr-4 font-medium">Durum</th>
-              {isAdmin && <th className="py-2 pr-4 text-right font-medium">Islem</th>}
+              {isAdmin && <th className="py-2 pr-4 text-right font-medium">İşlem</th>}
             </tr>
           </thead>
           <tbody>
@@ -120,7 +120,7 @@ export function BrandsManager() {
                   <button
                     disabled={!isAdmin}
                     onClick={() => patchBrand.mutate({ id: b.id, data: { isPopular: !b.isPopular } })}
-                    title={b.isPopular ? 'Sik kullanilanlardan cikar' : 'Sik kullanilan yap'}
+                    title={b.isPopular ? 'Sık kullanılanlardan çıkar' : 'Sık kullanılan yap'}
                     className={`${isAdmin ? 'cursor-pointer' : 'cursor-default'}`}
                   >
                     <Star className={`h-5 w-5 ${b.isPopular ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
@@ -134,15 +134,15 @@ export function BrandsManager() {
                 {isAdmin && (
                   <td className="py-2 pr-4">
                     <div className="flex justify-end gap-1">
-                      <button onClick={() => setForm({ id: b.id, name: b.name, isPopular: b.isPopular })} title="Duzenle" className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100">
+                      <button onClick={() => setForm({ id: b.id, name: b.name, isPopular: b.isPopular })} title="Düzenle" className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100">
                         <Pencil className="h-4 w-4" />
                       </button>
                       {b.active ? (
-                        <button onClick={() => patchBrand.mutate({ id: b.id, data: { active: false } })} title="Pasiflestir" className="rounded-lg p-1.5 text-red-400 hover:bg-red-50">
+                        <button onClick={() => patchBrand.mutate({ id: b.id, data: { active: false } })} title="Pasifleştir" className="rounded-lg p-1.5 text-red-400 hover:bg-red-50">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       ) : (
-                        <button onClick={() => patchBrand.mutate({ id: b.id, data: { active: true } })} title="Aktiflestir" className="rounded-lg p-1.5 text-green-500 hover:bg-green-50">
+                        <button onClick={() => patchBrand.mutate({ id: b.id, data: { active: true } })} title="Aktifleştir" className="rounded-lg p-1.5 text-green-500 hover:bg-green-50">
                           <Power className="h-4 w-4" />
                         </button>
                       )}
@@ -156,7 +156,7 @@ export function BrandsManager() {
       </div>
 
       {!isAdmin && (
-        <p className="mt-3 text-xs text-slate-400">Marka ekleme/duzenleme yetkisi yalnizca yoneticidedir.</p>
+        <p className="mt-3 text-xs text-slate-400">Marka ekleme/düzenleme yetkisi yalnızca yöneticidedir.</p>
       )}
     </section>
   );

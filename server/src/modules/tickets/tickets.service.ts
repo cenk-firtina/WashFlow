@@ -3,10 +3,10 @@ import { prisma } from '../../lib/prisma';
 import { ApiError } from '../../lib/http';
 import { generateTicketCode, generateTrackingToken } from '../../utils/codes';
 import { normalizePhone, normalizePlate } from '../../utils/text';
-import { enqueueIntakeMessage, enqueueReadyMessage } from '../../services/messageQueue.service';
+import { enqueueIntakeMessage, enqueueReadyMessage, sendQueuedMessage } from '../../services/messageQueue.service';
 
 // Panoda gorunen "aktif" durumlar.
-export const ACTIVE_STATUSES: TicketStatus[] = ['QUEUED', 'WASHING', 'DETAILING', 'READY'];
+export const ACTIVE_STATUSES: TicketStatus[] = ['QUEUED'];
 
 // Bilet + iliskili tum veriyi tek sekilde donmek icin ortak include.
 const ticketInclude = {
@@ -112,14 +112,16 @@ export async function createTicket(input: CreateTicketInput): Promise<TicketWith
     });
   });
 
-  // 3) INTAKE WhatsApp mesajini kuyruga ekle (commit sonrasi; toggle kapaliysa atlanir).
-  await enqueueIntakeMessage({
+  // 3) INTAKE WhatsApp mesajini kuyruga ekle ve hemen gonder (toggle kapaliysa atlanir).
+  const intakeRow = await enqueueIntakeMessage({
     phone: ticket.vehicle.customer.phone,
     ad: ticket.vehicle.customer.name,
     plaka: ticket.vehicle.plate,
     estimatedReadyAt: ticket.estimatedReadyAt,
     trackingToken: ticket.trackingToken,
   });
+  // Kabul yanitini bekletmeden anlik gonder; hata log satirina yazilir.
+  if (intakeRow) void sendQueuedMessage(intakeRow.id).catch(() => undefined);
 
   return ticket;
 }
@@ -138,15 +140,49 @@ export async function getTicket(id: number): Promise<TicketWithRelations | null>
 }
 
 /**
- * Durum guncelleme. READY'e geciste READY WhatsApp mesajini siraya alir,
- * COMPLETED'ta completedAt isler.
+ * Secilen gunde teslim edilen (COMPLETED) biletler — panodaki gunluk tablo.
+ * dateStr: 'YYYY-MM-DD'; gecersiz/yoksa bugun.
+ */
+export async function listCompletedByDate(dateStr?: string): Promise<TicketWithRelations[]> {
+  const base = dateStr ? new Date(`${dateStr}T00:00:00`) : new Date();
+  const start = Number.isNaN(base.getTime()) ? new Date() : base;
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+  return prisma.jobTicket.findMany({
+    where: { status: 'COMPLETED', completedAt: { gte: start, lt: end } },
+    include: ticketInclude,
+    orderBy: { completedAt: 'desc' },
+  });
+}
+
+/**
+ * Panodan manuel WhatsApp bildirimi. kind='INTAKE' -> "araci teslim aldik",
+ * kind='READY' -> "araciniz hazir". Ilgili toggle kapaliysa null doner.
+ */
+export async function notifyTicket(id: number, kind: 'INTAKE' | 'READY') {
+  const t = await prisma.jobTicket.findUnique({ where: { id }, include: ticketInclude });
+  if (!t) throw new ApiError(404, 'Bilet bulunamadi.');
+  const base = { phone: t.vehicle.customer.phone, ad: t.vehicle.customer.name, plaka: t.vehicle.plate };
+  const row =
+    kind === 'READY'
+      ? await enqueueReadyMessage(base)
+      : await enqueueIntakeMessage({ ...base, estimatedReadyAt: t.estimatedReadyAt, trackingToken: t.trackingToken });
+  // Buton = anlik gonderim. Toggle kapaliysa row null doner.
+  if (!row) return { queued: false, sent: false, error: 'Bu bildirim türü ayarlardan kapalı.' };
+  const r = await sendQueuedMessage(row.id);
+  return { queued: true, sent: r.sent, error: r.error };
+}
+
+/**
+ * Durum guncelleme. COMPLETED'ta completedAt isler.
+ * READY mesaji otomatik gonderilmez (panodan manuel yollanir).
  */
 export async function updateStatus(id: number, status: TicketStatus): Promise<TicketWithRelations> {
   const current = await prisma.jobTicket.findUnique({ where: { id }, include: ticketInclude });
   if (!current) throw new ApiError(404, 'Bilet bulunamadi.');
 
-  const becomingReady = status === 'READY' && current.status !== 'READY';
-
+  // READY mesaji otomatik gonderilmez; panodan manuel "Bilgi Ver" ile yollanir.
   const updated = await prisma.jobTicket.update({
     where: { id },
     data: {
@@ -155,14 +191,6 @@ export async function updateStatus(id: number, status: TicketStatus): Promise<Ti
     },
     include: ticketInclude,
   });
-
-  if (becomingReady) {
-    await enqueueReadyMessage({
-      phone: updated.vehicle.customer.phone,
-      ad: updated.vehicle.customer.name,
-      plaka: updated.vehicle.plate,
-    });
-  }
 
   return updated;
 }

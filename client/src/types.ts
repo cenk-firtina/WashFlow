@@ -1,5 +1,5 @@
 export type Role = 'ADMIN' | 'OPERATOR';
-export type VehicleSegment = 'SEDAN' | 'SUV' | 'VAN';
+export type VehicleSegment = 'HATCHBACK' | 'SEDAN' | 'SUV' | 'VAN';
 export type TicketStatus =
   | 'QUEUED'
   | 'WASHING'
@@ -51,6 +51,28 @@ export interface VehicleBrand {
   isPopular: boolean;
   active: boolean;
   createdAt: string;
+}
+
+export interface VehicleVisit {
+  id: number;
+  ticketCode: string;
+  date: string;
+  completedAt: string | null;
+  status: TicketStatus;
+  services: string[];
+  totalPrice: number;
+  intervalDays: number | null;
+}
+
+export interface VehicleHistory {
+  vehicle: { id: number; plate: string; brandModel: string | null; segment: VehicleSegment };
+  customer: { id: number; name: string; phone: string };
+  visitCount: number;
+  firstVisit: string | null;
+  lastVisit: string | null;
+  totalSpent: number;
+  avgIntervalDays: number | null;
+  visits: VehicleVisit[];
 }
 
 export interface TicketService {

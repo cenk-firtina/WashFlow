@@ -73,33 +73,19 @@ export default function NotificationSettings() {
         <MessageCircle className="h-5 w-5 text-green-600" /> WhatsApp Bildirimleri
       </h2>
 
-      <section className="space-y-3 rounded-2xl bg-white p-6 shadow-sm">
-        <h3 className="text-base font-semibold">Otomatik Bildirim Anahtarlari</h3>
-        <Toggle checked={bool(KEYS.intake)} onChange={(v) => set(KEYS.intake, String(v))} label="Arac Kabul (INTAKE)" desc="Bilet acildiginda musteriye WhatsApp." />
-        <Toggle checked={bool(KEYS.ready)} onChange={(v) => set(KEYS.ready, String(v))} label="Teslime Hazir (READY)" desc="Durum 'Hazir' olunca WhatsApp." />
-        <Toggle checked={bool(KEYS.retention)} onChange={(v) => set(KEYS.retention, String(v))} label="Geri Cagirma (RETENTION)" desc="Cron ile uzun sure gelmeyen musterilere WhatsApp." />
+      <section className="space-y-3 rounded-2xl bg-white p-6 shadow-card">
+        <h3 className="text-base font-semibold">Otomatik Bildirim Anahtarları</h3>
+        <Toggle checked={bool(KEYS.intake)} onChange={(v) => set(KEYS.intake, String(v))} label="Araç Kabul (INTAKE)" desc="Bilet açıldığında müşteriye WhatsApp." />
+        <Toggle checked={bool(KEYS.ready)} onChange={(v) => set(KEYS.ready, String(v))} label="Teslime Hazır (READY)" desc="Durum 'Hazır' olunca WhatsApp." />
       </section>
 
-      <section className="grid gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-2">
+      <section className="space-y-4 rounded-2xl bg-white p-6 shadow-card">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Geri cagirma esigi (gun)</label>
-          <input type="number" min={1} value={form[KEYS.threshold] ?? ''} onChange={(e) => set(KEYS.threshold, e.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2" />
-          <p className="mt-1 text-xs text-slate-400">Son ziyaretten kac gun sonra hatirlatilsin.</p>
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Tekrar bekleme (gun)</label>
-          <input type="number" min={1} value={form[KEYS.cooldown] ?? ''} onChange={(e) => set(KEYS.cooldown, e.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2" />
-          <p className="mt-1 text-xs text-slate-400">Ayni musteriye tekrar mesaj icin min. gun.</p>
-        </div>
-      </section>
-
-      <section className="space-y-4 rounded-2xl bg-white p-6 shadow-sm">
-        <div>
-          <h3 className="text-base font-semibold">Meta Template Eslemesi</h3>
+          <h3 className="text-base font-semibold">Meta Template Eşlemesi</h3>
           <p className="mt-1 text-xs text-slate-500">
-            Mesaj metinleri Meta Business'ta onaylanan template'lerde tanimlidir. Buraya her mesaj tipi icin
-            <b> onayli template adini</b> ve <b>dil kodunu</b> girin. Parametre sirasi:
-            INTAKE → ad, plaka, saat, link · READY → ad, plaka · RETENTION → plaka.
+            Mesaj metinleri Meta Business'ta onaylanan template'lerde tanımlıdır. Buraya her mesaj tipi için
+            <b> onaylı template adını</b> ve <b>dil kodunu</b> girin. Parametre sırası:
+            INTAKE → ad, plaka, saat, link · READY → ad, plaka.
           </p>
         </div>
 
@@ -110,9 +96,8 @@ export default function NotificationSettings() {
           </div>
           <div />
           {[
-            { key: KEYS.waTplIntake, label: 'INTAKE template adi' },
-            { key: KEYS.waTplReady, label: 'READY template adi' },
-            { key: KEYS.waTplRetention, label: 'RETENTION template adi' },
+            { key: KEYS.waTplIntake, label: 'INTAKE template adı' },
+            { key: KEYS.waTplReady, label: 'READY template adı' },
           ].map((t) => (
             <div key={t.key}>
               <label className="mb-1 block text-sm font-medium text-slate-700">{t.label}</label>
@@ -122,12 +107,12 @@ export default function NotificationSettings() {
         </div>
       </section>
 
-      <section className="space-y-4 rounded-2xl bg-white p-6 shadow-sm">
+      <section className="space-y-4 rounded-2xl bg-white p-6 shadow-card">
         <div>
-          <h3 className="text-base font-semibold">Onizleme Metinleri (log icin)</h3>
+          <h3 className="text-base font-semibold">Önizleme Metinleri (log için)</h3>
           <p className="mt-1 text-xs text-slate-500">
-            Panelde/loglarda gorunecek okunur metin. Gercek gonderim Meta template'i ile yapilir; bu metni
-            template ile ayni tutmaniz onerilir. Yer tutucular:{' '}
+            Panelde/loglarda görünecek okunur metin. Gerçek gönderim Meta template'i ile yapılır; bu metni
+            template ile aynı tutmanız önerilir. Yer tutucular:{' '}
             <code className="rounded bg-slate-100 px-1">{'{ad}'}</code>{' '}
             <code className="rounded bg-slate-100 px-1">{'{plaka}'}</code>{' '}
             <code className="rounded bg-slate-100 px-1">{'{saat}'}</code>{' '}
@@ -136,8 +121,7 @@ export default function NotificationSettings() {
         </div>
         {[
           { key: KEYS.tplIntake, label: 'Kabul (INTAKE)' },
-          { key: KEYS.tplReady, label: 'Teslime Hazir (READY)' },
-          { key: KEYS.tplRetention, label: 'Geri Cagirma (RETENTION)' },
+          { key: KEYS.tplReady, label: 'Teslime Hazır (READY)' },
         ].map((t) => (
           <div key={t.key}>
             <label className="mb-1 block text-sm font-medium text-slate-700">{t.label}</label>

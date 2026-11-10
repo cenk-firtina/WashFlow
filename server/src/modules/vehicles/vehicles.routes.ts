@@ -7,6 +7,7 @@ const router = Router();
 
 router.use(requireAuth);
 router.get('/lookup', asyncHandler(controller.lookup));
+router.get('/history', asyncHandler(controller.history));
 router.get('/', asyncHandler(controller.list));
 
 export default router;

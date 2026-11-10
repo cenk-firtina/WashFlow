@@ -1,4 +1,4 @@
-import { MessageType } from '@prisma/client';
+import { MessageQueue, MessageType } from '@prisma/client';
 import { env } from '../config/env';
 import { prisma } from '../lib/prisma';
 import { getWhatsAppService } from './whatsapp/WhatsAppService';
@@ -115,12 +115,46 @@ export interface ProcessResult {
   failed: number;
 }
 
+/** Tek kuyruk kaydini saglayiciya gonderir ve durumunu gunceller. */
+async function deliver(item: MessageQueue): Promise<{ sent: boolean; error?: string }> {
+  const wa = getWhatsAppService();
+  const params = Array.isArray(item.params) ? (item.params as string[]) : [];
+  const res = await wa.sendTemplate(item.phone, item.templateName ?? '', item.languageCode, params);
+
+  if (res.success) {
+    await prisma.messageQueue.update({
+      where: { id: item.id },
+      data: { status: 'SENT', sentAt: new Date(), errorLog: res.providerRef ?? null },
+    });
+    return { sent: true };
+  }
+
+  const retries = item.retries + 1;
+  const giveUp = retries >= env.whatsapp.maxRetries;
+  await prisma.messageQueue.update({
+    where: { id: item.id },
+    data: {
+      status: giveUp ? 'FAILED' : 'PENDING',
+      retries,
+      errorLog: res.error ?? 'Bilinmeyen hata',
+      scheduledAt: giveUp ? item.scheduledAt : new Date(Date.now() + 15 * 60 * 1000),
+    },
+  });
+  return { sent: false, error: res.error };
+}
+
+/** Panodaki butondan anlik gonderim: tek PENDING kaydi hemen gonderir. */
+export async function sendQueuedMessage(id: number): Promise<{ sent: boolean; error?: string }> {
+  const item = await prisma.messageQueue.findUnique({ where: { id } });
+  if (!item || item.status !== 'PENDING') return { sent: false, error: 'Gonderilecek mesaj bulunamadi.' };
+  return deliver(item);
+}
+
 /**
  * Kuyruktaki PENDING (gonderim zamani gelmis) mesajlari WhatsApp Cloud API'ye
  * gonderir. Cron worker tarafindan cagrilir.
  */
 export async function processPendingQueue(limit = env.whatsapp.batchSize): Promise<ProcessResult> {
-  const wa = getWhatsAppService();
   const now = new Date();
 
   const pending = await prisma.messageQueue.findMany({
@@ -132,34 +166,9 @@ export async function processPendingQueue(limit = env.whatsapp.batchSize): Promi
   const result: ProcessResult = { processed: pending.length, sent: 0, failed: 0 };
 
   for (const item of pending) {
-    const params = Array.isArray(item.params) ? (item.params as string[]) : [];
-    const res = await wa.sendTemplate(
-      item.phone,
-      item.templateName ?? '',
-      item.languageCode,
-      params,
-    );
-
-    if (res.success) {
-      result.sent++;
-      await prisma.messageQueue.update({
-        where: { id: item.id },
-        data: { status: 'SENT', sentAt: new Date(), errorLog: res.providerRef ?? null },
-      });
-    } else {
-      const retries = item.retries + 1;
-      const giveUp = retries >= env.whatsapp.maxRetries;
-      result.failed++;
-      await prisma.messageQueue.update({
-        where: { id: item.id },
-        data: {
-          status: giveUp ? 'FAILED' : 'PENDING',
-          retries,
-          errorLog: res.error ?? 'Bilinmeyen hata',
-          scheduledAt: giveUp ? item.scheduledAt : new Date(Date.now() + 15 * 60 * 1000),
-        },
-      });
-    }
+    const { sent } = await deliver(item);
+    if (sent) result.sent++;
+    else result.failed++;
   }
 
   return result;

@@ -1,36 +1,27 @@
 import type { TicketStatus } from '../types';
 
 export const STATUS_LABELS: Record<TicketStatus, string> = {
-  QUEUED: 'Sirada',
-  WASHING: 'Yikamada',
+  QUEUED: 'Sırada',
+  WASHING: 'Yıkamada',
   DETAILING: 'Kurulama / Detay',
-  READY: 'Teslime Hazir',
+  READY: 'Teslime Hazır',
   COMPLETED: 'Teslim Edildi',
-  CANCELLED: 'Iptal',
+  CANCELLED: 'İptal',
 };
 
 // Kanban sutunlari (sirali). `bar` = ust renkli serit (yuvarlak koseye uyumlu).
+// Panoda tek aktif durum: Islemde (QUEUED). "Tamamlandi" -> COMPLETED.
 export const BOARD_COLUMNS: { status: TicketStatus; title: string; bar: string }[] = [
-  { status: 'QUEUED', title: 'Sirada', bar: 'bg-slate-400' },
-  { status: 'WASHING', title: 'Yikamada', bar: 'bg-blue-500' },
-  { status: 'DETAILING', title: 'Kurulama / Detay', bar: 'bg-amber-500' },
-  { status: 'READY', title: 'Teslime Hazir', bar: 'bg-green-500' },
+  { status: 'QUEUED', title: 'İşlemde', bar: 'bg-brand-500' },
 ];
 
 // Bir durumdan ilerlenebilecek sonraki durum.
 export const NEXT_STATUS: Partial<Record<TicketStatus, TicketStatus>> = {
-  QUEUED: 'WASHING',
-  WASHING: 'DETAILING',
-  DETAILING: 'READY',
-  READY: 'COMPLETED',
+  QUEUED: 'COMPLETED',
 };
 
-// Bir durumdan geri alinabilecek onceki durum (panoda "geri al").
-export const PREV_STATUS: Partial<Record<TicketStatus, TicketStatus>> = {
-  WASHING: 'QUEUED',
-  DETAILING: 'WASHING',
-  READY: 'DETAILING',
-};
+// Geri alma kullanilmiyor.
+export const PREV_STATUS: Partial<Record<TicketStatus, TicketStatus>> = {};
 
 export const STATUS_BADGE: Record<TicketStatus, string> = {
   QUEUED: 'bg-slate-100 text-slate-700',

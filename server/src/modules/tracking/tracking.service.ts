@@ -5,18 +5,16 @@ import { ApiError } from '../../lib/http';
 // Musteriye gosterilen adimlar (CANCELLED/COMPLETED ayri ele alinir).
 const STEP_ORDER: { key: TicketStatus; label: string }[] = [
   { key: 'QUEUED', label: 'Kabul Edildi' },
-  { key: 'WASHING', label: 'Yikamada' },
-  { key: 'DETAILING', label: 'Kurulama' },
-  { key: 'READY', label: 'Teslime Hazir' },
+  { key: 'READY', label: 'Teslime Hazır' },
 ];
 
 const STATUS_LABELS: Record<TicketStatus, string> = {
-  QUEUED: 'Sirada',
-  WASHING: 'Yikamada',
+  QUEUED: 'Sırada',
+  WASHING: 'Yıkamada',
   DETAILING: 'Kurulama / Detay',
-  READY: 'Teslime Hazir',
+  READY: 'Teslime Hazır',
   COMPLETED: 'Teslim Edildi',
-  CANCELLED: 'Iptal Edildi',
+  CANCELLED: 'İptal Edildi',
 };
 
 /** Ad gizliligi: "Mehmet Yilmaz" -> "Mehmet Y." */

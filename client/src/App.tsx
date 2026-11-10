@@ -3,6 +3,7 @@ import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import BoardPage from './pages/BoardPage';
 import DashboardPage from './pages/DashboardPage';
+import HistoryPage from './pages/HistoryPage';
 import IntakePage from './pages/IntakePage';
 import LoginPage from './pages/LoginPage';
 import SettingsLayout from './pages/settings/SettingsLayout';
@@ -28,6 +29,7 @@ export default function App() {
       >
         <Route index element={<BoardPage />} />
         <Route path="/kabul" element={<IntakePage />} />
+        <Route path="/gecmis" element={<HistoryPage />} />
         <Route path="/yonetim" element={<DashboardPage />} />
         <Route
           path="/ayarlar"

@@ -20,6 +20,7 @@ enum Role {
 }
 
 enum VehicleSegment {
+  HATCHBACK
   SEDAN
   SUV
   VAN

@@ -2,9 +2,9 @@ import { Bell, Car, ChevronRight, Tag } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 
 const SECTIONS = [
-  { to: 'bildirimler', label: 'Bildirimler', desc: 'WhatsApp mesaj ayarlari', icon: Bell },
-  { to: 'hizmetler', label: 'Hizmetler', desc: 'Hizmet, fiyat, sure & kategori', icon: Tag },
-  { to: 'markalar', label: 'Arac Markalari', desc: 'Marka listesi & sik kullanilanlar', icon: Car },
+  { to: 'bildirimler', label: 'Bildirimler', desc: 'WhatsApp mesaj ayarları', icon: Bell },
+  { to: 'hizmetler', label: 'Hizmetler', desc: 'Hizmet, fiyat, süre & kategori', icon: Tag },
+  { to: 'markalar', label: 'Araç Markaları', desc: 'Marka listesi & sık kullanılanlar', icon: Car },
 ];
 
 export default function SettingsLayout() {

@@ -79,10 +79,10 @@ export function ServicesManager() {
   const canSubmit = form.name.trim().length >= 2 && Number(form.price) >= 0 && Number(form.durationMinutes) > 0;
 
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm">
+    <section className="rounded-2xl bg-white p-6 shadow-card">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
-          <Tag className="h-5 w-5 text-brand-600" /> Hizmet Yonetimi
+          <Tag className="h-5 w-5 text-brand-600" /> Hizmet Yönetimi
         </h2>
         <span className="text-sm text-slate-400">{services.filter((s) => s.active).length} aktif hizmet</span>
       </div>
@@ -91,13 +91,13 @@ export function ServicesManager() {
       {isAdmin && (
         <div className="mb-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
           <p className="mb-3 text-sm font-medium text-slate-600">
-            {form.id ? `Hizmet duzenleniyor (#${form.id})` : 'Yeni hizmet ekle'}
+            {form.id ? `Hizmet düzenleniyor (#${form.id})` : 'Yeni hizmet ekle'}
           </p>
           <div className="grid gap-3 sm:grid-cols-12">
             <input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              placeholder="Hizmet adi"
+              placeholder="Hizmet adı"
               className="rounded-lg border border-slate-300 px-3 py-2 text-sm sm:col-span-4"
             />
             <input
@@ -129,7 +129,7 @@ export function ServicesManager() {
                 min={1}
                 value={form.durationMinutes}
                 onChange={(e) => setForm((f) => ({ ...f, durationMinutes: e.target.value }))}
-                placeholder="Sure"
+                placeholder="Süre"
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 pr-9 text-sm"
               />
               <span className="pointer-events-none absolute right-2 top-2 text-xs text-slate-400">dk</span>
@@ -138,7 +138,7 @@ export function ServicesManager() {
               <button
                 onClick={() => save.mutate()}
                 disabled={!canSubmit || save.isPending}
-                title={form.id ? 'Guncelle' : 'Ekle'}
+                title={form.id ? 'Güncelle' : 'Ekle'}
                 className="flex w-full items-center justify-center rounded-lg bg-brand-600 px-3 py-2 text-white hover:bg-brand-700 disabled:opacity-50"
               >
                 {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : form.id ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
@@ -146,7 +146,7 @@ export function ServicesManager() {
               {form.id && (
                 <button
                   onClick={() => { setForm(EMPTY); setError(''); }}
-                  title="Vazgec"
+                  title="Vazgeç"
                   className="rounded-lg border border-slate-300 px-2 text-slate-500 hover:bg-white"
                 >
                   <X className="h-4 w-4" />
@@ -166,9 +166,9 @@ export function ServicesManager() {
               <th className="py-2 pr-4 font-medium">Hizmet</th>
               <th className="py-2 pr-4 font-medium">Kategori</th>
               <th className="py-2 pr-4 font-medium">Fiyat</th>
-              <th className="py-2 pr-4 font-medium">Sure</th>
+              <th className="py-2 pr-4 font-medium">Süre</th>
               <th className="py-2 pr-4 font-medium">Durum</th>
-              {isAdmin && <th className="py-2 pr-4 font-medium text-right">Islem</th>}
+              {isAdmin && <th className="py-2 pr-4 font-medium text-right">İşlem</th>}
             </tr>
           </thead>
           <tbody>
@@ -193,15 +193,15 @@ export function ServicesManager() {
                 {isAdmin && (
                   <td className="py-2 pr-4">
                     <div className="flex justify-end gap-1">
-                      <button onClick={() => startEdit(s)} title="Duzenle" className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100">
+                      <button onClick={() => startEdit(s)} title="Düzenle" className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100">
                         <Pencil className="h-4 w-4" />
                       </button>
                       {s.active ? (
-                        <button onClick={() => toggleActive.mutate(s)} title="Pasiflestir" className="rounded-lg p-1.5 text-red-400 hover:bg-red-50">
+                        <button onClick={() => toggleActive.mutate(s)} title="Pasifleştir" className="rounded-lg p-1.5 text-red-400 hover:bg-red-50">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       ) : (
-                        <button onClick={() => toggleActive.mutate(s)} title="Aktiflestir" className="rounded-lg p-1.5 text-green-500 hover:bg-green-50">
+                        <button onClick={() => toggleActive.mutate(s)} title="Aktifleştir" className="rounded-lg p-1.5 text-green-500 hover:bg-green-50">
                           <Power className="h-4 w-4" />
                         </button>
                       )}
@@ -215,7 +215,7 @@ export function ServicesManager() {
       </div>
 
       {!isAdmin && (
-        <p className="mt-3 text-xs text-slate-400">Hizmet ekleme/duzenleme yetkisi yalnizca yoneticidedir.</p>
+        <p className="mt-3 text-xs text-slate-400">Hizmet ekleme/düzenleme yetkisi yalnızca yöneticidedir.</p>
       )}
     </section>
   );
